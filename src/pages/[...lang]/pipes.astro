@@ -1,0 +1,12 @@
+---
+import Playground from '../../layouts/Playground.astro';
+import PipesPlayground from '../../playgrounds/pipes/Pipes';
+import { langPaths, type Lang } from '../../lib/i18n';
+
+export const getStaticPaths = langPaths;
+const { lang } = Astro.props as { lang: Lang };
+---
+
+<Playground lang={lang} slug="pipes">
+  <PipesPlayground client:load lang={lang} />
+</Playground>

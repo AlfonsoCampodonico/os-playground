@@ -1,0 +1,35 @@
+{
+  "name": "os-playground",
+  "type": "module",
+  "version": "0.0.1",
+  "engines": {
+    "node": ">=22.23.4"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "test": "vitest run",
+    "check": "astro check",
+    "test:ostep": "test -d .ostep-homework || git clone --depth 1 https://github.com/remzi-arpacidusseau/ostep-homework .ostep-homework; vitest run"
+  },
+  "dependencies": {
+    "@astrojs/react": "^7.1.1",
+    "@tailwindcss/vite": "^4.3.3",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "astro": "^7.4.2",
+    "clsx": "^2.1.1",
+    "motion": "^14.6.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "tailwindcss": "^4.3.3"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.12",
+    "@types/node": "^26.6.5",
+    "typescript": "^6.0.3",
+    "vitest": "^5.0.5"
+  }
+}

@@ -1,0 +1,96 @@
+---
+import { href, routeOf, ui, LANGS, type Lang } from '../lib/i18n';
+import { SECTIONS, PLAYGROUNDS } from '../lib/playgrounds';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = ui[lang];
+const route = routeOf(Astro.url.pathname);
+const current = PLAYGROUNDS.find((p) => `/${p.slug}` === route);
+const themes = [
+  { id: 'light', label: t.themeLight, icon: 'M12 4V2m0 20v-2m8-8h2M2 12h2m13.66-5.66 1.41-1.41M4.93 19.07l1.41-1.41m0-11.32L4.93 4.93m14.14 14.14-1.41-1.41M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z' },
+  { id: 'system', label: t.themeSystem, icon: 'M4 5h16v11H4zM8 20h8m-4-4v4' },
+  { id: 'dark', label: t.themeDark, icon: 'M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5Z' },
+];
+---
+
+<header class="sticky top-0 z-40 border-b border-line bg-canvas/85 backdrop-blur-md">
+  <div class="mx-auto flex h-15 max-w-7xl items-center gap-4 px-4 sm:px-6">
+    <a href={href('/', lang)} class="group flex items-center gap-2.5 shrink-0">
+      <span class="grid size-7 place-items-center rounded-lg bg-accent font-mono text-[11px] font-semibold text-accent-ink transition-transform group-hover:-rotate-6">SO</span>
+      <span class="font-serif text-[21px] leading-none tracking-tight max-[359px]:sr-only">{t.siteName}</span>
+    </a>
+
+    <nav class="ml-4 hidden items-center gap-1 lg:flex" aria-label={t.topics}>
+      {
+        SECTIONS.map((s) => (
+          <a
+            href={`${href('/', lang)}#${s.id}`}
+            class:list={[
+              'rounded-md px-2.5 py-1.5 text-[13.5px] transition-colors hover:bg-chip hover:text-ink',
+              current?.section === s.id ? 'text-ink font-medium' : 'text-ink-2',
+            ]}
+          >
+            {s.title[lang]}
+          </a>
+        ))
+      }
+    </nav>
+
+    <div class="ml-auto flex items-center gap-2">
+      <div class="flex overflow-hidden rounded-lg border border-line-strong font-mono text-[11.5px] font-medium" role="group" aria-label="Language">
+        {
+          LANGS.map((l) => (
+            <a
+              href={href(route, l)}
+              data-set-lang={l}
+              hreflang={l}
+              aria-current={l === lang ? 'true' : undefined}
+              class:list={['px-2.5 py-1 uppercase transition-colors', l === lang ? 'bg-chip text-ink' : 'text-ink-3 hover:text-ink']}
+            >
+              {l}
+            </a>
+          ))
+        }
+      </div>
+      <div class="flex overflow-hidden rounded-lg border border-line-strong" role="group" aria-label="Theme">
+        {
+          themes.map((th) => (
+            <button type="button" data-theme-btn={th.id} title={th.label} aria-label={th.label} class="theme-btn grid size-[27px] place-items-center text-ink-3 transition-colors hover:text-ink">
+              <svg viewBox="0 0 24 24" class="size-[15px]" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d={th.icon} />
+              </svg>
+            </button>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</header>
+
+<style>
+  :global([data-theme-pref='light']) .theme-btn[data-theme-btn='light'],
+  :global([data-theme-pref='system']) .theme-btn[data-theme-btn='system'],
+  :global([data-theme-pref='dark']) .theme-btn[data-theme-btn='dark'] {
+    background: var(--chip);
+    color: var(--ink);
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>('[data-theme-btn]').forEach((b) =>
+    b.addEventListener('click', () => (window as any).__setTheme(b.dataset.themeBtn)),
+  );
+  document.querySelectorAll<HTMLAnchorElement>('[data-set-lang]').forEach((a) =>
+    a.addEventListener('click', () => {
+      try {
+        localStorage.setItem('lang', a.dataset.setLang!);
+      } catch {}
+      // Keep the playground setup when switching language.
+      a.href = a.href.split(/[?#]/)[0] + location.search + location.hash;
+    }),
+  );
+</script>

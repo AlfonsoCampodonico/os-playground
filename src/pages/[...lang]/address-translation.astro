@@ -1,0 +1,12 @@
+---
+import Playground from '../../layouts/Playground.astro';
+import AddressTranslationPlayground from '../../playgrounds/address-translation/AddressTranslation';
+import { langPaths, type Lang } from '../../lib/i18n';
+
+export const getStaticPaths = langPaths;
+const { lang } = Astro.props as { lang: Lang };
+---
+
+<Playground lang={lang} slug="address-translation">
+  <AddressTranslationPlayground client:load lang={lang} />
+</Playground>

@@ -1,0 +1,185 @@
+---
+import Base from '../../layouts/Base.astro';
+import { href, langPaths, ui, type Lang } from '../../lib/i18n';
+import { PLAYGROUNDS, SECTIONS } from '../../lib/playgrounds';
+import Glyph from '../../components/Glyph.astro';
+
+export const getStaticPaths = langPaths;
+const { lang } = Astro.props as { lang: Lang };
+const t = ui[lang];
+
+const copy = {
+  es: {
+    kicker: 'Sistemas Operativos · FIUBA · 2026/2',
+    title: ['Sistemas Operativos,', 'para tocar.'],
+    lede: 'Simuladores interactivos de cada tema de la materia. Nada que instalar, ninguna consola: abrí un tema, cambiá los parámetros y mirá qué hace el sistema operativo, paso a paso.',
+    start: 'Empezar por el principio',
+    try: 'Probar la TLB',
+    calendar: 'Recorrido de la cursada',
+    parcial: 'Parcial',
+    legendTopic: 'Tema con playground',
+    features: [
+      ['Paso a paso', 'Avanzá, retrocedé o reproducí cada simulación con ← → y espacio.'],
+      ['Igual que OSTEP', 'Mismas convenciones y semillas que los simuladores del libro: chequeá tu tarea.'],
+      ['Links compartibles', 'La configuración vive en la URL: mandá un ejemplo exacto por Discord.'],
+    ],
+  },
+  en: {
+    kicker: 'Operating Systems · FIUBA · 2026/2',
+    title: ['Operating Systems', 'you can touch.'],
+    lede: 'Interactive simulators for every topic in the course. Nothing to install, no console: open a topic, change the parameters and watch what the operating system does, step by step.',
+    start: 'Start from the beginning',
+    try: 'Try the TLB',
+    calendar: 'The course, week by week',
+    parcial: 'Midterm',
+    legendTopic: 'Topic with a playground',
+    features: [
+      ['Step by step', 'Step forward, back, or play each simulation with ← → and space.'],
+      ['Same as OSTEP', 'Same conventions and seeds as the book’s simulators: check your homework.'],
+      ['Shareable links', 'The setup lives in the URL: send an exact example over Discord.'],
+    ],
+  },
+}[lang];
+
+const weeks = Array.from({ length: 16 }, (_, i) => i + 1);
+const PARCIAL_WEEK = 11;
+---
+
+<Base lang={lang}>
+  <section class="relative overflow-hidden border-b border-line">
+    <div class="hero-grid pointer-events-none absolute inset-0" aria-hidden="true"></div>
+    <div class="relative mx-auto max-w-7xl px-4 pb-14 pt-16 sm:px-6 sm:pb-20 sm:pt-24">
+      <p class="font-mono text-[11.5px] font-medium uppercase tracking-[0.08em] text-ink-3 animate-rise">{copy.kicker}</p>
+      <h1 class="mt-4 font-serif text-[46px] leading-[0.98] tracking-[-0.025em] sm:text-[76px]">
+        <span class="block animate-rise">{copy.title[0]}</span>
+        <span class="block text-accent animate-rise [animation-delay:80ms]">{copy.title[1]}</span>
+      </h1>
+      <p class="mt-6 max-w-2xl text-[17px] leading-relaxed text-ink-2 animate-rise [animation-delay:140ms]">{copy.lede}</p>
+      <div class="mt-8 flex flex-wrap gap-3 animate-rise [animation-delay:200ms]">
+        <a href={href(`/${PLAYGROUNDS[0].slug}`, lang)} class="inline-flex h-11 items-center gap-2 rounded-xl bg-accent px-5 text-[14px] font-medium text-accent-ink shadow-sm transition hover:brightness-110 active:scale-[0.98]">
+          {copy.start}
+          <span aria-hidden="true">→</span>
+        </a>
+        <a href={href('/tlb', lang)} class="inline-flex h-11 items-center gap-2 rounded-xl border border-line-strong bg-surface px-5 text-[14px] font-medium transition hover:bg-chip">
+          {copy.try}
+        </a>
+      </div>
+
+      <div class="mt-14 grid gap-3 sm:grid-cols-3">
+        {
+          copy.features.map(([h, p], i) => (
+            <div class="rounded-2xl border border-line bg-surface/70 p-4 backdrop-blur-sm animate-rise" style={`animation-delay:${260 + i * 60}ms`}>
+              <div class="font-serif text-[19px]">{h}</div>
+              <p class="mt-1 text-[13.5px] text-ink-2">{p}</p>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-7xl px-4 pt-12 sm:px-6">
+    <h2 class="font-mono text-[11.5px] font-medium uppercase tracking-[0.08em] text-ink-3">{copy.calendar}</h2>
+    <ol class="mt-4 grid grid-cols-8 gap-1.5 sm:grid-cols-16">
+      {
+        weeks.map((w) => {
+          const here = PLAYGROUNDS.filter((p) => p.week === w);
+          const isParcial = w === PARCIAL_WEEK;
+          return (
+            <li class="group relative">
+              {here.length > 0 ? (
+                <a
+                  href={`#${here[0].slug}`}
+                  data-week-link={w}
+                  class="flex h-14 flex-col justify-between rounded-lg border border-line bg-surface p-1.5 transition hover:-translate-y-0.5 hover:border-accent hover:shadow-panel"
+                  title={here.map((p) => p.title[lang]).join(' · ')}
+                >
+                  <span class="font-mono text-[10.5px] text-ink-3">{w}</span>
+                  <span class="flex gap-0.5">
+                    {here.map(() => (
+                      <span class="h-1.5 flex-1 rounded-full bg-accent" />
+                    ))}
+                  </span>
+                </a>
+              ) : (
+                <div title={isParcial ? copy.parcial : undefined} class:list={['flex h-14 flex-col justify-between rounded-lg border p-1.5', isParcial ? 'border-ink/40 bg-chip' : 'border-dashed border-line']}>
+                  <span class:list={['font-mono text-[10.5px]', isParcial ? 'text-ink' : 'text-ink-3']}>{w}</span>
+                  {isParcial && <span class="h-1.5 rounded-full bg-ink" />}
+                </div>
+              )}
+            </li>
+          );
+        })
+      }
+    </ol>
+    <div class="mt-3 flex gap-5 text-[12px] text-ink-3">
+      <span class="flex items-center gap-1.5"><span class="h-1.5 w-4 rounded-full bg-accent" />{copy.legendTopic}</span>
+      <span class="flex items-center gap-1.5"><span class="h-1.5 w-4 rounded-full bg-ink" />{copy.parcial}</span>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-7xl px-4 pt-14 sm:px-6">
+    <h2 class="font-serif text-[30px] tracking-[-0.015em]">{t.topics}</h2>
+    <div class="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {
+        PLAYGROUNDS.map((p, i) => {
+          const section = SECTIONS.find((s) => s.id === p.section)!;
+          const firstOfSection = PLAYGROUNDS.findIndex((q) => q.section === p.section) === i;
+          return (
+            <a
+              id={p.slug}
+              href={href(`/${p.slug}`, lang)}
+              class="card group relative flex scroll-mt-24 flex-col overflow-hidden rounded-2xl border border-line bg-surface shadow-panel transition duration-200 hover:-translate-y-1 hover:border-line-strong"
+            >
+              {firstOfSection && <span id={section.id} class="absolute -top-24" aria-hidden="true" />}
+              <div class="relative h-32 overflow-hidden border-b border-line bg-sunken">
+                <Glyph slug={p.slug} />
+                <span class="absolute left-3 top-3 font-mono text-[11px] text-ink-3">{String(i + 1).padStart(2, '0')}</span>
+              </div>
+              <div class="flex flex-1 flex-col p-5">
+                <div class="flex flex-wrap items-center gap-x-2 gap-y-1 font-mono text-[11px] uppercase tracking-[0.06em] text-ink-3">
+                  <span class="text-accent">{section.title[lang]}</span>
+                  <span>·</span>
+                  <span>
+                    {t.week} {p.week}
+                  </span>
+                  {p.ostep && (
+                    <>
+                      <span>·</span>
+                      <span>
+                        {t.ostepChapter} {p.ostep}
+                      </span>
+                    </>
+                  )}
+                </div>
+                <h3 class="mt-2 font-serif text-[23px] leading-tight transition-colors group-hover:text-accent">{p.title[lang]}</h3>
+                <p class="mt-2 flex-1 text-[13.5px] leading-relaxed text-ink-2">{p.blurb[lang]}</p>
+                <span class="mt-4 inline-flex items-center gap-1 text-[13px] font-medium text-accent">
+                  {lang === 'es' ? 'Abrir' : 'Open'}
+                  <span class="transition-transform group-hover:translate-x-1" aria-hidden="true">
+                    →
+                  </span>
+                </span>
+              </div>
+            </a>
+          );
+        })
+      }
+    </div>
+  </section>
+</Base>
+
+<style>
+  .hero-grid {
+    background-image:
+      linear-gradient(to right, var(--line) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--line) 1px, transparent 1px);
+    background-size: 44px 44px;
+    mask-image: radial-gradient(ellipse 80% 70% at 70% 30%, black 10%, transparent 75%);
+    opacity: 0.7;
+  }
+  .card:target {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-soft);
+  }
+</style>
