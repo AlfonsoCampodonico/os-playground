@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import { useUi } from './lang';
 import { IconButton, Icons, Kbd } from './ui';
-import { SPEEDS, type Stepper } from './useStepper';
+import { SPEEDS, STEP_MS, type Stepper } from './useStepper';
 
 /** Transport bar: first / back / play / forward / last, a scrubber and speed. */
 export function StepControls({ stepper, className }: { stepper: Stepper; className?: string }) {
@@ -64,6 +64,7 @@ export function StepControls({ stepper, className }: { stepper: Stepper; classNa
               type="button"
               role="radio"
               aria-checked={stepper.speed === s}
+              title={t.perStep(STEP_MS / s / 1000)}
               onClick={() => stepper.setSpeed(s)}
               className={clsx(
                 'rounded-md px-1.5 py-0.5 font-mono text-[11px] transition-colors',

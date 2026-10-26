@@ -11,12 +11,26 @@ export interface Stepper {
   last: () => void;
   playing: boolean;
   toggle: () => void;
-  /** Steps per second while playing. */
+  /** Playback multiplier: 1× shows each step for STEP_MS. */
   speed: number;
   setSpeed: (s: number) => void;
 }
 
 export const SPEEDS = [0.5, 1, 2, 4, 8];
+
+/** How long each step stays on screen at 1×, long enough to read the narration. */
+export const STEP_MS = 2500;
+
+const SPEED_KEY = 'speed';
+
+function savedSpeed(): number | undefined {
+  try {
+    const n = Number(localStorage.getItem(SPEED_KEY));
+    return SPEEDS.includes(n) ? n : undefined;
+  } catch {
+    return undefined;
+  }
+}
 
 /**
  * Drives a step-through simulation. `total` is the number of steps; when it
@@ -27,7 +41,19 @@ export function useStepper(total: number, opts: { startAt?: 'first' | 'last'; ke
   const { startAt, keyboard = true } = opts;
   const [index, setIndexRaw] = useState(startAt === 'last' ? total : 0);
   const [playing, setPlaying] = useState(false);
-  const [speed, setSpeed] = useState(2);
+  const [speed, setSpeedRaw] = useState(1);
+
+  // The student's last choice applies on every page; read after hydration.
+  useEffect(() => {
+    const s = savedSpeed();
+    if (s !== undefined) setSpeedRaw(s);
+  }, []);
+  const setSpeed = useCallback((s: number) => {
+    setSpeedRaw(s);
+    try {
+      localStorage.setItem(SPEED_KEY, String(s));
+    } catch {}
+  }, []);
 
   const clamp = useCallback((i: number) => Math.max(0, Math.min(total, i)), [total]);
   const setIndex = useCallback((i: number) => setIndexRaw(clamp(i)), [clamp]);
@@ -62,7 +88,7 @@ export function useStepper(total: number, opts: { startAt?: 'first' | 'last'; ke
       setPlaying(false);
       return;
     }
-    const id = window.setTimeout(() => setIndexRaw((i) => clamp(i + 1)), 1000 / speed);
+    const id = window.setTimeout(() => setIndexRaw((i) => clamp(i + 1)), STEP_MS / speed);
     return () => window.clearTimeout(id);
   }, [playing, index, total, speed, clamp]);
 

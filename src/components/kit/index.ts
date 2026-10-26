@@ -1,5 +1,5 @@
 export { LangProvider, useLang, useUi, useStrings } from './lang';
-export { useStepper, SPEEDS, type Stepper } from './useStepper';
+export { useStepper, SPEEDS, STEP_MS, type Stepper } from './useStepper';
 export { useUrlState } from './useUrlState';
 export { StepControls } from './StepControls';
 export {
