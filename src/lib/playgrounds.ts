@@ -181,14 +181,28 @@ export const PLAYGROUNDS: PlaygroundMeta[] = [
     section: 'virtualization',
     week: 12,
     ostep: 'B',
-    title: { es: 'Máquinas virtuales', en: 'Virtual machines' },
+    title: { es: 'Máquinas virtuales, microVMs y contenedores', en: 'VMs, microVMs and containers' },
     blurb: {
-      es: 'Trap-and-emulate: el kernel invitado ejecuta una instrucción privilegiada, ¿quién la atiende?',
-      en: 'Trap-and-emulate: the guest kernel runs a privileged instruction. Who handles it?',
+      es: 'Trap-and-emulate en una VM, el boot y el virtio de una microVM, y los namespaces y cgroups de un contenedor.',
+      en: 'Trap-and-emulate in a VM, the boot and virtio of a microVM, and the namespaces and cgroups of a container.',
     },
     lede: {
-      es: 'Un hipervisor corre un sistema operativo entero como si fuera un proceso. Seguí qué pasa cuando el kernel invitado intenta hacer algo privilegiado, o cuando una aplicación del invitado hace una syscall.',
-      en: 'A hypervisor runs a whole operating system as if it were a process. Follow what happens when the guest kernel tries something privileged, or when a guest application makes a syscall.',
+      es: 'Un hipervisor corre un sistema operativo entero como si fuera un proceso; una microVM hace lo mismo con lo mínimo indispensable; un contenedor ni siquiera tiene kernel propio. Compará quién atiende cada syscall, cuánto tarda en arrancar y qué aísla cada uno.',
+      en: 'A hypervisor runs a whole operating system as if it were a process; a microVM does the same with the bare minimum; a container has no kernel of its own at all. Compare who handles each syscall, how long each takes to boot and what each one isolates.'
+    },
+  },
+  {
+    slug: 'kubernetes',
+    section: 'virtualization',
+    week: 12,
+    title: { es: 'Kubernetes', en: 'Kubernetes' },
+    blurb: {
+      es: 'Seguí un pod desde kubectl apply hasta Running: scheduler, kubelet, cgroups y Services.',
+      en: 'Follow a pod from kubectl apply to Running: scheduler, kubelet, cgroups and Services.',
+    },
+    lede: {
+      es: 'Un pod son procesos en namespaces y cgroups sobre el kernel de un nodo. Mirá cómo el control plane decide dónde corre, qué pasa cuando no entra, cuando se pasa de memoria o cuando se cae un nodo.',
+      en: 'A pod is processes in namespaces and cgroups on a node’s kernel. Watch the control plane decide where it runs, and what happens when it does not fit, runs out of memory or loses its node.',
     },
   },
 ];

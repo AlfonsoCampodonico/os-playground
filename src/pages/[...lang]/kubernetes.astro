@@ -1,0 +1,12 @@
+---
+import Playground from '../../layouts/Playground.astro';
+import KubernetesPlayground from '../../playgrounds/kubernetes/Kubernetes';
+import { langPaths, type Lang } from '../../lib/i18n';
+
+export const getStaticPaths = langPaths;
+const { lang } = Astro.props as { lang: Lang };
+---
+
+<Playground lang={lang} slug="kubernetes">
+  <KubernetesPlayground client:load lang={lang} />
+</Playground>

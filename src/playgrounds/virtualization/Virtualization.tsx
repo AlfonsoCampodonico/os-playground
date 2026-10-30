@@ -40,6 +40,8 @@ import {
 } from '../../sim/virtualization';
 import { Contrast, Protocol, Stack, VmmPanel, XlatePanel, type Hover } from './parts';
 import { S } from './strings';
+import { M, type Kind } from './modeStrings';
+import { Compare, ContainersMode, MicrovmMode } from './Modes';
 
 const DEFAULTS = { sc: 'syscall', hw: false, pv: false, spins: 3 };
 
@@ -55,6 +57,21 @@ export default function VirtualizationPlayground({ lang }: { lang: Lang }) {
 }
 
 function Virtualization() {
+  const m = useStrings(M);
+  const [k, setK] = useUrlState({ kind: 'vm' });
+  const kind: Kind = k.kind === 'microvm' || k.kind === 'containers' ? k.kind : 'vm';
+  const picker = (
+    <Field label={m.kind}>
+      <Segmented value={kind} options={(['vm', 'microvm', 'containers'] as const).map((v) => ({ value: v, label: m.kinds[v] }))} onChange={(v) => setK({ kind: v })} ariaLabel={m.kind} />
+    </Field>
+  );
+  const extra = <Compare kind={kind} />;
+  if (kind === 'microvm') return <MicrovmMode picker={picker} extra={extra} />;
+  if (kind === 'containers') return <ContainersMode picker={picker} extra={extra} />;
+  return <VmMode picker={picker} extra={extra} />;
+}
+
+function VmMode({ picker, extra }: { picker: React.ReactNode; extra: React.ReactNode }) {
   const s = useStrings(S);
   const t = useUi();
   const [cfg, set, reset] = useUrlState(DEFAULTS);
@@ -125,6 +142,7 @@ function Virtualization() {
       bodyClassName="p-4"
       footer={<Explain>{s.explain}</Explain>}
     >
+      {picker}
       <Field label={s.scenario}>
         <Segmented size="sm" value={scenario} options={SCENARIOS.map((id) => ({ value: id, label: s.presets[id] }))} onChange={(sc) => set({ sc })} ariaLabel={s.scenario} />
       </Field>
@@ -319,6 +337,7 @@ function Virtualization() {
           <Reveal question={s.q3(presetName)}>{s.a3(vEnd.counters.modeSwitches, nEnd.counters.modeSwitches, ratio(vEnd.counters.cost, nEnd.counters.cost))}</Reveal>
         </div>
       </Panel>
+      {extra}
     </Bench>
   );
 }
