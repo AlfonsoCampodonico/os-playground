@@ -1,0 +1,20 @@
+---
+/**
+ * SO Playground mark: the OS stack from the course slides.
+ * Two processes (cyan) on the kernel (blue) on the hardware (slate).
+ * Keep in sync with public/favicon.svg.
+ */
+interface Props {
+  class?: string;
+}
+const { class: className } = Astro.props;
+---
+
+<svg viewBox="0 0 32 32" class={className} role="img" aria-label="SO Playground">
+  <rect width="32" height="32" rx="8" fill="#0B2D4A" />
+  <rect x="0.5" y="0.5" width="31" height="31" rx="7.5" fill="none" stroke="#3BAFE0" stroke-opacity="0.35" />
+  <rect x="6" y="7" width="9" height="5" rx="1.5" fill="#3BAFE0" />
+  <rect x="17" y="7" width="9" height="5" rx="1.5" fill="#3BAFE0" />
+  <rect x="6" y="14" width="20" height="5" rx="1.5" fill="#2B8CB8" />
+  <rect x="6" y="21" width="20" height="5" rx="1.5" fill="#5C6B7A" />
+</svg>

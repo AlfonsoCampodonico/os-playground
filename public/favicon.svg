@@ -1,4 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <rect width="32" height="32" rx="8" fill="#0b2d4a"/>
-  <text x="16" y="21" text-anchor="middle" font-family="ui-monospace, Menlo, monospace" font-size="12" font-weight="700" fill="#3bafe0">SO</text>
+  <rect width="32" height="32" rx="8" fill="#0B2D4A"/>
+  <rect x="6" y="7" width="9" height="5" rx="1.5" fill="#3BAFE0"/>
+  <rect x="17" y="7" width="9" height="5" rx="1.5" fill="#3BAFE0"/>
+  <rect x="6" y="14" width="20" height="5" rx="1.5" fill="#2B8CB8"/>
+  <rect x="6" y="21" width="20" height="5" rx="1.5" fill="#5C6B7A"/>
 </svg>
