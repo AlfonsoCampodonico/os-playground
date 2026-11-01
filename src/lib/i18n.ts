@@ -79,6 +79,14 @@ export const ui = {
     sameAsOstep: 'Igual que OSTEP',
     keyboardHint: '← → para avanzar · espacio para reproducir',
     invalid: 'Entrada inválida',
+    // guided flow
+    flowPick: 'Elegí un escenario',
+    flowPickHint: 'Empezá por uno de los ejemplos. Después podés cambiar todo.',
+    flowWatch: 'Miralo paso a paso',
+    flowWatchHint: 'Dale a Reproducir o avanzá con →. Cada paso dice qué pasó.',
+    flowUnderstand: 'Entendé el resultado',
+    flowUnderstandHint: 'Compará, mirá los números y probá las preguntas.',
+    advanced: 'Ajustes avanzados',
   },
   en: {
     siteName: 'SO Playground',
@@ -115,6 +123,13 @@ export const ui = {
     sameAsOstep: 'Same as OSTEP',
     keyboardHint: '← → to step · space to play',
     invalid: 'Invalid input',
+    flowPick: 'Pick a scenario',
+    flowPickHint: 'Start from one of the examples. You can change everything later.',
+    flowWatch: 'Watch it step by step',
+    flowWatchHint: 'Press Play or step with →. Each step says what happened.',
+    flowUnderstand: 'Understand the result',
+    flowUnderstandHint: 'Compare, read the numbers and try the questions.',
+    advanced: 'Advanced settings',
   },
 } as const;
 

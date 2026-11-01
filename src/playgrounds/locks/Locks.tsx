@@ -181,20 +181,21 @@ function Locks() {
       }
       footer={<Explain>{s.explain}</Explain>}
     >
-      <Field label={s.presets}>
-        <div className="space-y-2">
+      <Field primary label={s.presets}>
+        <div className="space-y-3">
           {groups.map((g) => (
             <div key={g}>
-              <div className="mb-1 font-mono text-[10.5px] uppercase tracking-[0.06em] text-ink-3">{s.groups[g]}</div>
-              <div className="flex flex-wrap gap-1">
+              <div className="mb-1.5 text-[13px] font-medium text-ink-2">{s.groups[g]}</div>
+              <div className="flex flex-wrap gap-2">
                 {PRESETS.filter((p) => p.group === g).map((p) => (
                   <button
                     key={p.id}
                     type="button"
+                    aria-pressed={activePreset?.id === p.id}
                     onClick={() => applyPreset(p.id)}
                     className={clsx(
-                      'rounded-lg px-2 py-1 font-mono text-[11.5px] transition-all duration-150',
-                      activePreset?.id === p.id ? 'bg-surface text-ink shadow-[0_1px_2px_rgb(0_0_0/0.08)] ring-1 ring-accent' : 'bg-sunken text-ink-2 hover:text-ink',
+                      'rounded-xl border px-3.5 py-2 text-[14px] font-semibold transition-all duration-150 active:scale-[0.98]',
+                      activePreset?.id === p.id ? 'border-accent bg-accent text-accent-ink shadow-sm' : 'border-line-strong bg-sunken text-ink hover:border-accent hover:text-accent',
                     )}
                   >
                     {s.presetNames[p.id]}

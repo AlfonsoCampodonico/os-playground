@@ -144,7 +144,7 @@ export function TreeMode({ cfg, set, reset, modeField }: { cfg: ForkCfg; set: Se
       footer={<Explain>{s.treeExplain}</Explain>}
     >
       {modeField}
-      <Field label={s.preset}>
+      <Field primary label={s.preset}>
         <Segmented
           size="sm"
           value={activePreset ?? ('' as TreePresetId)}

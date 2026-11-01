@@ -186,7 +186,7 @@ function Scheduling() {
   const presetRow = (chapter: 7 | 8) => {
     const ids = PRESET_IDS.filter((id) => PRESETS[id].chapter === chapter);
     return (
-      <Field label={chapter === 7 ? s.presetsCh7 : s.presetsCh8}>
+      <Field primary label={chapter === 7 ? s.presetsCh7 : s.presetsCh8}>
         <Segmented
           size="sm"
           value={activePreset && ids.includes(activePreset) ? activePreset : ('' as PresetId)}
@@ -211,7 +211,7 @@ function Scheduling() {
       {presetRow(7)}
       {presetRow(8)}
 
-      <Field label={s.policy}>
+      <Field primary label={s.policy}>
         <Segmented value={policy} options={POLICIES.map((p) => ({ value: p, label: p.toUpperCase(), title: s.policyTitles[p] }))} onChange={(p) => set({ policy: p })} />
       </Field>
 
@@ -344,14 +344,6 @@ function Scheduling() {
       >
         <StepControls stepper={stepper} />
 
-        <div className="mt-5">
-          <Gantt run={run} jobs={jobs} index={stepper.index} hover={hover} setHover={setHover} onSeek={stepper.setIndex} s={s} />
-        </div>
-
-        <div className="mt-5">
-          <QueueView run={run} step={step} jobs={jobs} mlfq={cfg.mlfq} hover={hover} setHover={setHover} s={s} />
-        </div>
-
         <div className="mt-4">
           {stepper.index === 0 ? (
             <Narration>{s.startNarr}</Narration>
@@ -362,6 +354,15 @@ function Scheduling() {
           )}
           {run.truncated && <p className="mt-2 text-[12px] text-warn">{s.truncated(run.makespan)}</p>}
         </div>
+
+        <div className="mt-5">
+          <Gantt run={run} jobs={jobs} index={stepper.index} hover={hover} setHover={setHover} onSeek={stepper.setIndex} s={s} />
+        </div>
+
+        <div className="mt-5">
+          <QueueView run={run} step={step} jobs={jobs} mlfq={cfg.mlfq} hover={hover} setHover={setHover} s={s} />
+        </div>
+        <div className="h-4" />
       </Panel>
 
 

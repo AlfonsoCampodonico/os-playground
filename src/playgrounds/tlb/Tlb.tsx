@@ -194,7 +194,7 @@ function Tlb() {
         <Explain>{s.explain}</Explain>
       }
     >
-      <Field label={s.preset}>
+      <Field primary label={s.preset}>
         <Segmented
           size="sm"
           value={activePreset ?? ('' as PresetId)}
@@ -208,7 +208,7 @@ function Tlb() {
       <Field label={s.entries}>
         <NumberField value={cfg.entries} min={1} max={16} onChange={(entries) => set({ entries })} ariaLabel={s.entries} />
       </Field>
-      <Field label={s.policy}>
+      <Field primary label={s.policy}>
         <Segmented
           value={cfg.policy}
           options={[
@@ -243,7 +243,7 @@ function Tlb() {
   );
 
   return (
-    <Bench setup={setup}>
+    <Bench setup={setup} watch={2}>
       <Panel title={t.stepOf(stepper.index, stepper.total)} actions={<Badge tone="accent">{cfg.policy.toUpperCase()} · {cfg.entries}</Badge>}>
         <StepControls stepper={stepper} />
 

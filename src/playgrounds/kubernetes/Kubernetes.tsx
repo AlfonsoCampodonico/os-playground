@@ -475,7 +475,7 @@ function Kubernetes() {
       bodyClassName="p-4"
       footer={<Explain>{s.explain}</Explain>}
     >
-      <Field label={s.scenario}>
+      <Field primary label={s.scenario}>
         <Segmented size="sm" value={sc} options={SCENARIOS.map((id) => ({ value: id, label: s.scenarios[id] }))} onChange={(id) => set({ scenario: id, ...PRESET[id] })} />
       </Field>
       <div className="mb-2 text-[11px] font-medium uppercase tracking-[0.07em] text-ink-3">{s.pod}</div>
@@ -516,7 +516,7 @@ function Kubernetes() {
   const restarts = ours(state).reduce((a, p) => a + p.restarts, 0);
 
   return (
-    <Bench setup={setup}>
+    <Bench setup={setup} watch={3}>
       <Panel title={t.stepOf(stepper.index, stepper.total)} actions={<Badge tone="accent">{s.scenarios[sc]}</Badge>}>
         <StepControls stepper={stepper} />
         <div className="mt-4">

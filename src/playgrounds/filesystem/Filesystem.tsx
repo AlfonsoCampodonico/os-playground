@@ -214,7 +214,7 @@ function Filesystem() {
       bodyClassName="p-4"
       footer={<Explain>{s.explain}</Explain>}
     >
-      <Field label={s.preset}>
+      <Field primary label={s.preset}>
         <Segmented size="sm" value={activePreset ?? ('' as PresetId)} options={(Object.keys(PRESETS) as PresetId[]).map((id) => ({ value: id, label: s.presets[id] }))} onChange={(id) => loadProblem(PRESETS[id])} />
       </Field>
 
@@ -305,7 +305,7 @@ function Filesystem() {
   const halted = run.halted && idx === run.userStart;
 
   return (
-    <Bench setup={setup}>
+    <Bench setup={setup} watch={2}>
       <Panel title={t.stepOf(idx, stepper.total)} actions={<Badge tone="accent">{s.modes[mode]}</Badge>}>
         <StepControls stepper={stepper} />
 

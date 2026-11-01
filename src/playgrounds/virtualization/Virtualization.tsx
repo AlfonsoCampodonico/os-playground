@@ -61,7 +61,7 @@ function Virtualization() {
   const [k, setK] = useUrlState({ kind: 'vm' });
   const kind: Kind = k.kind === 'microvm' || k.kind === 'containers' ? k.kind : 'vm';
   const picker = (
-    <Field label={m.kind}>
+    <Field primary label={m.kind}>
       <Segmented value={kind} options={(['vm', 'microvm', 'containers'] as const).map((v) => ({ value: v, label: m.kinds[v] }))} onChange={(v) => setK({ kind: v })} ariaLabel={m.kind} />
     </Field>
   );
@@ -143,7 +143,7 @@ function VmMode({ picker, extra }: { picker: React.ReactNode; extra: React.React
       footer={<Explain>{s.explain}</Explain>}
     >
       {picker}
-      <Field label={s.scenario}>
+      <Field primary label={s.scenario}>
         <Segmented size="sm" value={scenario} options={SCENARIOS.map((id) => ({ value: id, label: s.presets[id] }))} onChange={(sc) => set({ sc })} ariaLabel={s.scenario} />
       </Field>
       <Field label={s.toggles}>
@@ -187,7 +187,7 @@ function VmMode({ picker, extra }: { picker: React.ReactNode; extra: React.React
   );
 
   return (
-    <Bench setup={setup}>
+    <Bench setup={setup} watch={2}>
       <Panel
         title={t.stepOf(i, stepper.total)}
         actions={<Badge tone="accent">{s.modeName[mode]}</Badge>}

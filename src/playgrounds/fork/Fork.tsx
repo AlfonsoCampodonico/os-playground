@@ -39,7 +39,7 @@ function Fork() {
   const s = useStrings(S);
   const [cfg, set, reset] = useUrlState(DEFAULTS);
   const modeField = (
-    <Field label={s.mode}>
+    <Field primary label={s.mode}>
       <Segmented
         value={cfg.mode}
         options={[

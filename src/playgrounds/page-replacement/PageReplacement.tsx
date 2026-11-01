@@ -164,7 +164,7 @@ function PageReplacement() {
       bodyClassName="p-4"
       footer={<Explain>{s.explain}</Explain>}
     >
-      <Field label={s.preset}>
+      <Field primary label={s.preset}>
         <Segmented
           size="sm"
           value={PRESET_KEYS.find((id) => presetActive(id, url)) ?? ('' as PresetKey)}
@@ -172,7 +172,7 @@ function PageReplacement() {
           onChange={(id) => set(presetPatch(id))}
         />
       </Field>
-      <Field label={s.policy} hint={s.policyHint[policy]}>
+      <Field primary label={s.policy} hint={s.policyHint[policy]}>
         <Segmented value={policy} options={POLICIES.map((p) => ({ value: p, label: p }))} onChange={(p) => set({ policy: p })} />
       </Field>
       <Field label={s.frames} hint="-C">
@@ -265,7 +265,7 @@ function PageReplacement() {
   );
 
   return (
-    <Bench setup={setup}>
+    <Bench setup={setup} watch={2}>
       <Panel
         title={t.stepOf(stepper.index, stepper.total)}
         actions={
