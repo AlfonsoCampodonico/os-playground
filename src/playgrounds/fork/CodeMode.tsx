@@ -75,7 +75,7 @@ export function CodeMode({ cfg, set, reset, modeField }: { cfg: ForkCfg; set: Se
       footer={<Explain>{s.codeExplain}</Explain>}
     >
       {modeField}
-      <Field label={s.preset}>
+      <Field primary label={s.preset}>
         <Segmented
           size="sm"
           value={activePreset ?? ('' as CodePresetId)}
@@ -195,7 +195,7 @@ export function CodeMode({ cfg, set, reset, modeField }: { cfg: ForkCfg; set: Se
   const sameCount = counts.every((c) => c === counts[0]);
 
   return (
-    <Bench setup={setup}>
+    <Bench setup={setup} watch={2}>
       <Panel title={t.stepOf(idx, total)} actions={<Badge tone="accent">{s.scheds[cfg.sched]}</Badge>}>
         <StepControls stepper={stepper} />
         <LayoutGroup id="fork-code">

@@ -1,31 +1,70 @@
 import clsx from 'clsx';
-import { useEffect, useId, useRef, useState, type ButtonHTMLAttributes, type ReactNode } from 'react';
+import { Children, createContext, useContext, useEffect, useId, useRef, useState, type ButtonHTMLAttributes, type ReactNode } from 'react';
+import { createPortal } from 'react-dom';
 import { useUi } from './lang';
 
 /* ---------- Layout ---------- */
 
 /**
- * Setup column + machine column. On narrow screens the setup collapses behind
- * a bar so the simulation is visible without scrolling past every field.
+ * Where `primary` fields from the setup render: the "pick a scenario" stage.
+ * Null until Bench mounts, so server and first client render match.
  */
-export function Bench({ setup, children, className }: { setup: ReactNode; children: ReactNode; className?: string }) {
-  const t = useUi();
-  const [open, setOpen] = useState(false);
+const PickSlot = createContext<HTMLElement | null>(null);
+/** True inside the pick stage, so selectors render larger there. */
+const InPick = createContext(false);
+
+/** One numbered stage of the flow, joined to the next by a line like the slides' timeline. */
+function Stage({ n, title, hint, last, children }: { n: number; title: ReactNode; hint?: ReactNode; last?: boolean; children: ReactNode }) {
   return (
-    <div className={clsx('grid items-start gap-4 lg:grid-cols-[340px_minmax(0,1fr)]', className)}>
-      <div className="lg:sticky lg:top-20">
-        <button
-          type="button"
-          aria-expanded={open}
-          onClick={() => setOpen((o) => !o)}
-          className="flex w-full items-center justify-between rounded-2xl border border-line bg-surface px-4 py-3 shadow-panel lg:hidden"
-        >
-          <span className="font-mono text-[11.5px] font-medium uppercase tracking-[0.07em] text-ink-2">{t.setup}</span>
-          <Icons.next className={clsx('size-4 text-ink-3 transition-transform', open && 'rotate-90')} />
-        </button>
-        <div className={clsx(open ? 'mt-2 animate-rise lg:mt-0' : 'max-lg:hidden')}>{setup}</div>
+    <section className="relative grid grid-cols-[36px_minmax(0,1fr)] gap-x-4 sm:grid-cols-[44px_minmax(0,1fr)]">
+      <div className="relative flex justify-center">
+        <span className="z-10 grid size-9 place-items-center rounded-full bg-accent text-[15px] font-bold text-accent-ink shadow-sm sm:size-11 sm:text-[17px]">{n}</span>
+        {!last && <span aria-hidden="true" className="absolute top-11 bottom-0 w-0.5 bg-accent/30" />}
       </div>
-      <div className="flex min-w-0 flex-col gap-4">{children}</div>
+      <div className={clsx('min-w-0', !last && 'pb-10')}>
+        <h2 className="pt-1 font-serif text-[22px] leading-tight sm:pt-2 sm:text-[24px]">{title}</h2>
+        {hint && <p className="mt-1 text-[14px] text-ink-2">{hint}</p>}
+        <div className="mt-4 flex min-w-0 flex-col gap-4">{children}</div>
+      </div>
+    </section>
+  );
+}
+
+/**
+ * The page as a three-stage flow: ① pick a scenario, ② watch it step by step,
+ * ③ understand the result. Fields marked `primary` in the setup show in stage
+ * ①; the full setup stays one click away under "Advanced settings". The first
+ * `watch` children are the machine and the views that move with each step
+ * (stage ②); the rest (comparisons, practice) make up stage ③.
+ */
+export function Bench({ setup, watch = 1, children, className }: { setup: ReactNode; watch?: number; children: ReactNode; className?: string }) {
+  const t = useUi();
+  const [slot, setSlot] = useState<HTMLElement | null>(null);
+  const all = Children.toArray(children);
+  const first = all.slice(0, watch);
+  const rest = all.slice(watch);
+  return (
+    <div className={clsx('flex flex-col', className)}>
+      <Stage n={1} title={t.flowPick} hint={t.flowPickHint}>
+        <div ref={setSlot} className="flex flex-col gap-4 rounded-2xl border border-line bg-surface p-4 shadow-panel empty:hidden sm:p-5" />
+        <details className="group rounded-2xl border border-line bg-surface shadow-panel">
+          <summary className="flex cursor-pointer list-none items-center gap-2 px-4 py-3 text-[14px] font-semibold text-ink-2 hover:text-accent [&::-webkit-details-marker]:hidden">
+            <Icons.next className="size-4 text-ink-3 transition-transform group-open:rotate-90" />
+            {t.advanced}
+          </summary>
+          <div className="border-t border-line p-3 sm:p-4 [&>section]:max-w-3xl [&>section]:border-0 [&>section]:shadow-none">
+            <PickSlot.Provider value={slot}>{setup}</PickSlot.Provider>
+          </div>
+        </details>
+      </Stage>
+      <Stage n={2} title={t.flowWatch} hint={t.flowWatchHint} last={rest.length === 0}>
+        {first}
+      </Stage>
+      {rest.length > 0 && (
+        <Stage n={3} title={t.flowUnderstand} hint={t.flowUnderstandHint} last>
+          {rest}
+        </Stage>
+      )}
     </div>
   );
 }
@@ -49,7 +88,7 @@ export function Panel({
     <section className={clsx('overflow-hidden rounded-2xl border border-line bg-surface shadow-panel', className)}>
       {(title || actions) && (
         <header className="flex min-h-11 items-center justify-between gap-3 border-b border-line px-4 py-2">
-          <h2 className="font-mono text-[11.5px] font-medium uppercase tracking-[0.07em] text-ink-2">{title}</h2>
+          <h3 className="text-[14px] font-semibold text-ink">{title}</h3>
           {actions && <div className="flex items-center gap-1.5">{actions}</div>}
         </header>
       )}
@@ -61,7 +100,25 @@ export function Panel({
 
 /* ---------- Form controls ---------- */
 
-export function Field({ label, hint, error, children }: { label: ReactNode; hint?: ReactNode; error?: ReactNode; children: ReactNode }) {
+/**
+ * A labelled setup field. `primary` fields (the mechanism, the mode, the
+ * examples) are the first decision a student makes, so Bench shows them up
+ * front in the "pick a scenario" stage instead of inside the advanced setup.
+ */
+export function Field({ label, hint, error, primary, children }: { label: ReactNode; hint?: ReactNode; error?: ReactNode; primary?: boolean; children: ReactNode }) {
+  const slot = useContext(PickSlot);
+  if (primary && slot)
+    return createPortal(
+      <InPick.Provider value={true}>
+        <div>
+          <div className="mb-2 text-[14px] font-semibold text-ink">{label}</div>
+          {children}
+          {hint && <p className="mt-1.5 text-[12.5px] text-ink-3">{hint}</p>}
+          {error && <p className="mt-1.5 text-[12.5px] text-bad animate-rise">{error}</p>}
+        </div>
+      </InPick.Provider>,
+      slot,
+    );
   return (
     <div className="mb-4 last:mb-0">
       <div className="mb-1.5 flex items-baseline justify-between gap-2">
@@ -93,6 +150,32 @@ export function Segmented<T extends string | number>({
   size?: 'sm' | 'md';
   ariaLabel?: string;
 }) {
+  // In the pick stage the choices are the main thing on screen: make them big.
+  if (useContext(InPick)) {
+    return (
+      <div role="radiogroup" aria-label={ariaLabel} className="flex flex-wrap gap-2">
+        {options.map((o) => {
+          const on = o.value === value;
+          return (
+            <button
+              key={String(o.value)}
+              type="button"
+              role="radio"
+              aria-checked={on}
+              title={o.title}
+              onClick={() => onChange(o.value)}
+              className={clsx(
+                'rounded-xl border px-4 py-2.5 text-left text-[14px] font-semibold transition-all duration-150 active:scale-[0.98]',
+                on ? 'border-accent bg-accent text-accent-ink shadow-sm' : 'border-line-strong bg-sunken text-ink hover:border-accent hover:text-accent',
+              )}
+            >
+              {o.label}
+            </button>
+          );
+        })}
+      </div>
+    );
+  }
   return (
     <div role="radiogroup" aria-label={ariaLabel} className="flex flex-wrap gap-1 rounded-xl bg-sunken p-1">
       {options.map((o) => {
@@ -313,7 +396,7 @@ export function Badge({ tone = 'neutral', children, className }: { tone?: Tone; 
 export function Stat({ label, value, tone = 'neutral', sub }: { label: ReactNode; value: ReactNode; tone?: Tone; sub?: ReactNode }) {
   return (
     <div className="min-w-0 px-4 py-3.5">
-      <div className="truncate font-mono text-[11px] font-medium uppercase tracking-[0.07em] text-ink-3">{label}</div>
+      <div className="truncate text-[13px] font-semibold text-ink-2">{label}</div>
       <div key={String(value)} className={clsx('mt-0.5 font-serif text-[32px] leading-tight tracking-[-0.02em] tabular-nums animate-pop', toneText[tone])}>
         {value}
       </div>
@@ -333,8 +416,8 @@ export function Narration({ children, tone = 'neutral' }: { children: ReactNode;
     <div
       aria-live="polite"
       className={clsx(
-        'flex min-h-12 flex-wrap items-center gap-x-2 gap-y-1 rounded-xl border px-4 py-2.5 font-mono text-[13px] animate-rise',
-        tone === 'neutral' ? 'border-line bg-sunken text-ink-2' : clsx('border-transparent', toneChip[tone]),
+        'flex min-h-14 flex-wrap items-center gap-x-2 gap-y-1 rounded-xl border-l-4 px-4 py-3 text-[15px] leading-snug animate-rise',
+        tone === 'neutral' ? 'border-accent bg-sunken text-ink' : clsx('border-current', toneChip[tone]),
       )}
     >
       {children}

@@ -316,10 +316,10 @@ function SetupPanel({ cfg, set, reset, run, bad, s }: { cfg: Setup; set: (p: Par
       bodyClassName="p-4"
       footer={<Explain>{s.explain[cfg.mech]}</Explain>}
     >
-      <Field label={s.mech}>
+      <Field primary label={s.mech}>
         <Segmented size="sm" value={cfg.mech} options={MECHS.map((m) => ({ value: m, label: s.mechs[m] }))} onChange={(mech) => set({ mech })} ariaLabel={s.mech} />
       </Field>
-      <Field label={s.preset}>
+      <Field primary label={s.preset}>
         <Segmented
           size="sm"
           value={preset ?? ('' as PresetId)}

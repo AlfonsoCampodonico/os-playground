@@ -117,7 +117,7 @@ export function MicrovmMode({ picker, extra }: { picker: ReactNode; extra: React
 
   const setup = (
     <Setup picker={picker} onReset={reset} explain={s.explain}>
-      <Field label={m.scenario}>
+      <Field primary label={m.scenario}>
         <Segmented size="sm" value={sc} options={MV_SCENARIOS.map((v) => ({ value: v, label: s.presets[v] }))} onChange={(mv) => set({ mv })} ariaLabel={m.scenario} />
       </Field>
       {sc === 'virtio' && (
@@ -134,7 +134,7 @@ export function MicrovmMode({ picker, extra }: { picker: ReactNode; extra: React
   const fullTotal = FULL_BOOT.reduce((a, b) => a + b.ms, 0);
 
   return (
-    <Bench setup={setup}>
+    <Bench setup={setup} watch={2}>
       <Panel title={t.stepOf(stepper.index, stepper.total)} actions={<Badge tone="accent">{s.presets[sc]}</Badge>} bodyClassName="p-0">
         <div className="p-4">
           <StepControls stepper={stepper} />
@@ -340,7 +340,7 @@ export function ContainersMode({ picker, extra }: { picker: ReactNode; extra: Re
 
   const setup = (
     <Setup picker={picker} onReset={reset} explain={s.explain}>
-      <Field label={m.scenario}>
+      <Field primary label={m.scenario}>
         <Segmented size="sm" value={sc} options={CT_SCENARIOS.map((v) => ({ value: v, label: s.presets[v] }))} onChange={(cs) => set({ cs })} ariaLabel={m.scenario} />
       </Field>
       {sc === 'cgroups' && (

@@ -126,7 +126,7 @@ function Syscalls() {
       bodyClassName="p-4"
       footer={<Explain>{s.explain}</Explain>}
     >
-      <Field label={s.preset}>
+      <Field primary label={s.preset}>
         <Segmented
           size="sm"
           value={activePreset ?? ('' as PresetId)}
@@ -182,7 +182,7 @@ function Syscalls() {
   const entry = firstSwitch >= 0 ? run.steps.slice(0, firstSwitch).findLastIndex((x) => x.pid === 'A' && (x.kind === 'hw-irq' || x.kind === 'hw-trap')) : -1;
 
   return (
-    <Bench setup={setup}>
+    <Bench setup={setup} watch={3}>
       <Panel title={t.stepOf(stepper.index, stepper.total)} actions={<Badge tone="accent">fig. {run.figure}</Badge>}>
         <StepControls stepper={stepper} />
 

@@ -127,7 +127,7 @@ function Pipes() {
       bodyClassName="p-4"
       footer={<Explain>{s.explain}</Explain>}
     >
-      <Field label={s.preset}>
+      <Field primary label={s.preset}>
         <Segmented
           size="sm"
           value={activePreset ?? ('' as PresetId)}
@@ -167,7 +167,7 @@ function Pipes() {
   const finalHang = run.hang && stepper.index === stepper.total;
 
   return (
-    <Bench setup={setup}>
+    <Bench setup={setup} watch={3}>
       <Panel
         title={t.stepOf(stepper.index, stepper.total)}
         actions={
